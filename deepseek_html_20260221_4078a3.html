@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edu Idea · AI Quiz & Chat</title>
+    <!-- Google Font & simple reset -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #f4f7fc 0%, #eef1f6 100%);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #1e293b;
+        }
+        .main-wrapper {
+            max-width: 1400px;
+            width: 100%;
+        }
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0f2b4b, #1e4a6f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        header p {
+            font-size: 1.1rem;
+            color: #475569;
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+        .brand-note {
+            background: #ffffffc0;
+            backdrop-filter: blur(4px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            font-size: 0.95rem;
+            margin-top: 0.6rem;
+            border: 1px solid #dbe0e8;
+            color: #1e3a5f;
+        }
+        .brand-note i {
+            font-style: normal;
+            background: #1e4a6f;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            margin: 0 4px;
+            font-size: 0.85rem;
+        }
+
+        /* ---------- QUIZ SECTION ---------- */
+        .quiz-panel {
+            background: white;
+            border-radius: 36px;
+            padding: 2rem 2rem 2.2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 35px -8px rgba(0,20,40,0.15), inset 0 1px 3px #fffffffa;
+            border: 1px solid #ffffff70;
+            backdrop-filter: blur(2px);
+        }
+        .quiz-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #0c1f33;
+            margin-bottom: 1.6rem;
+        }
+        .quiz-title span {
+            background: #1e4a6f;
+            color: white;
+            font-size: 1.2rem;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+        }
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+        .question-card {
+            background: #f9fbfe;
+            padding: 1.6rem 1.4rem;
+            border-radius: 28px;
+            border: 1px solid #e2eaf2;
+            transition: 0.2s;
+        }
+        .question-card:hover {
+            border-color: #acc4db;
+            background: #feffff;
+        }
+        .q-text {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            color: #163a5c;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: white;
+            padding: 0.6rem 1rem;
+            border-radius: 50px;
+            border: 1px solid #d9e2ed;
+            cursor: pointer;
+            transition: 0.1s;
+            font-weight: 500;
+        }
+        .option-item.selected {
+            background: #d7e7ff;
+            border-color: #1e4a6f;
+            box-shadow: 0 2px 6px #1e4a6f20;
+        }
+        .option-item input[type="radio"] {
+            accent-color: #1e4a6f;
+            width: 1.2rem;
+            height: 1.2rem;
+            margin: 0;
+        }
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            background: white;
+            border: 1.5px solid #b9ccdf;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1e3a5f;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.02);
+        }
+        .btn-primary {
+            background: #1e4a6f;
+            border: 1.5px solid #0e2f48;
+            color: white;
+            box-shadow: 0 8px 16px -6px #1e4a6f90;
+        }
+        .btn-primary:hover {
+            background: #163e5c;
+            transform: scale(1.02);
+        }
+        .btn:hover {
+            background: #e6eef9;
+        }
+        .score-badge {
+            margin-left: auto;
+            background: #0e2f48;
+            color: white;
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+
+        /* ---------- CHAT SECTION ---------- */
+        .chat-section {
+            margin-top: 1rem;
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .chat-header h2 {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #0f2b48;
+        }
+        .chat-header h2 i {
+            font-style: normal;
+            background: #1fa5a0;
+            color: white;
+            font-size: 1rem;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            margin-left: 1rem;
+        }
+        .ai-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.8rem;
+        }
+        .ai-card {
+            background: #ffffffdd;
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            padding: 1.6rem 1.2rem 1.2rem 1.2rem;
+            box-shadow: 0 18px 30px -10px #1e3a5f40;
+            border: 1px solid #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+        .ai-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            padding: 0 0.2rem;
+        }
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: #1e2f41;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 4px 8px #00000020;
+        }
+        .brand-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .chat-messages {
+            background: #f1f5fb;
+            border-radius: 28px;
+            padding: 1.2rem 0.8rem;
+            height: 220px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid #cbd6e4;
+            scroll-behavior: smooth;
+        }
+        .msg-row {
+            display: flex;
+            flex-direction: column;
+        }
+        .msg-user, .msg-ai {
+            max-width: 85%;
+            padding: 0.6rem 1rem;
+            border-radius: 24px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        .msg-user {
+            background: #1e4a6f;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 6px;
+        }
+        .msg-ai {
+            background: white;
+            color: #1e293b;
+            align-self: flex-start;
+            border-bottom-left-radius: 6px;
+            border: 1px solid #cee0f0;
+        }
+        .ai-input-area {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 0.4rem;
+        }
+        .ai-input-area input {
+            flex: 1;
+            padding: 0.9rem 1.2rem;
+            border: 1.5px solid #c2d5ea;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            outline: none;
+            background: white;
+            transition: 0.2s;
+        }
+        .ai-input-area input:focus {
+            border-color: #1e4a6f;
+            box-shadow: 0 0 0 3px #1e4a6f30;
+        }
+        .ai-input-area button {
+            background: #1e4a6f;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0 1.4rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid #0e3652;
+            letter-spacing: 0.3px;
+        }
+        .ai-input-area button:hover {
+            background: #123a57;
+        }
+        .footer-note {
+            margin-top: 3rem;
+            text-align: center;
+            color: #54738f;
+            font-size: 0.95rem;
+            border-top: 1px dashed #b9cde0;
+            padding-top: 1.8rem;
+        }
+        .footer-note strong {
+            color: #1e4a6f;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+<div class="main-wrapper">
+    <header>
+        <h1>🤖 edu idea · क्विज़ & AI चैट</h1>
+        <p>famous & reliable AI brands — बातचीत करें और सीखें</p>
+        <div class="brand-note">
+            ⚡ भरोसेमंद ब्रांड: <i>ChatGPT</i> <i>Gemini</i> <i>Claude</i> और भी बहुत कुछ
+        </div>
+    </header>
+
+    <!-- QUIZ SECTION (edu idea नाम से quiz) -->
+    <section class="quiz-panel" id="quizPanel">
+        <div class="quiz-title">
+            <span>🎓 क्विज़</span> AI ब्रांड पहचान
+        </div>
+        <div class="questions-grid" id="questionsContainer">
+            <!-- JS generated questions -->
+        </div>
+        <div class="quiz-actions">
+            <button class="btn" id="resetQuizBtn">↻ दोबारा</button>
+            <button class="btn btn-primary" id="submitQuizBtn">✅ जवाब जांचें</button>
+            <div class="score-badge" id="scoreDisplay">0/4</div>
+        </div>
+    </section>
+
+    <!-- MULTIPLE AI CHAT (फेमस ब्रांड) -->
+    <section class="chat-section">
+        <div class="chat-header">
+            <h2>🗣️ मल्टिपल AI चैट <i>reliable brands</i></h2>
+        </div>
+        <div class="ai-grid" id="aiChatGrid"></div>
+    </section>
+
+    <div class="footer-note">
+        ⭐ <strong>चीज़ें जोड़ी गईं:</strong> क्विज़ + 3 फेमस AI चैट (ChatGPT, Gemini, Claude) – हर एक का अपना अंदाज़<br>
+        ✨ सिम्युलेटेड रिस्पॉन्स, बस मज़े के लिए — सभी ब्रांड अपने-अपने तरीके से जवाब देते हैं।
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- QUIZ DATA (famous AI brands) ----------
+        const quizData = [
+            {
+                question: "किस कंपनी ने ChatGPT विकसित किया है?",
+                options: ["Google", "OpenAI", "Microsoft", "Anthropic"],
+                correct: 1
+            },
+            {
+                question: "Google का सबसे एडवांस AI मॉडल कौन सा है?",
+                options: ["Claude", "BERT", "Gemini", "LaMDA"],
+                correct: 2
+            },
+            {
+                question: "Claude AI किस कंपनी ने बनाया है?",
+                options: ["Anthropic", "DeepMind", "xAI", "Meta"],
+                correct: 0
+            },
+            {
+                question: "कौन सा AI मॉडल अपने बड़े कॉन्टेक्स्ट विंडो (1M tokens) के लिए फेमस है?",
+                options: ["GPT-3.5", "Claude 3", "BERT", "DALL-E"],
+                correct: 1
+            }
+        ];
+
+        // render quiz
+        const questionsContainer = document.getElementById('questionsContainer');
+        let userAnswers = new Array(quizData.length).fill(null);
+
+        function renderQuiz() {
+            let htmlStr = '';
+            quizData.forEach((q, idx) => {
+                htmlStr += `
+                    <div class="question-card" data-qidx="${idx}">
+                        <div class="q-text">${idx+1}. ${q.question}</div>
+                        <div class="options" id="q-${idx}">
+                `;
+                q.options.forEach((opt, optIdx) => {
+                    const isSelected = (userAnswers[idx] === optIdx);
+                    htmlStr += `
+                        <div class="option-item ${isSelected ? 'selected' : ''}" data-optidx="${optIdx}">
+                            <input type="radio" name="q${idx}" value="${optIdx}" ${isSelected ? 'checked' : ''}> 
+                            <span>${opt}</span>
+                        </div>
+                    `;
+                });
+                htmlStr += `</div></div>`;
+            });
+            questionsContainer.innerHTML = htmlStr;
+
+            // attach click listeners to each option div for custom selection style
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // if the click is on radio itself, let default handle, but we also manage style
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (e.target.tagName !== 'INPUT') {
+                        radio.checked = true;
+                    }
+                    // trigger change event manually
+                    const event = new Event('change', { bubbles: true });
+                    radio.dispatchEvent(event);
+                });
+            });
+
+            // radio change listener to update selected class & userAnswers
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', function(e) {
+                    const qDiv = this.closest('.question-card');
+                    const qIdx = qDiv.dataset.qidx;
+                    const optIdx = parseInt(this.value);
+                    userAnswers[qIdx] = optIdx;
+
+                    // remove selected class from siblings
+                    qDiv.querySelectorAll('.option-item').forEach(optItem => {
+                        optItem.classList.remove('selected');
+                    });
+                    this.closest('.option-item').classList.add('selected');
+                });
+            });
+        }
+
+        // score calculation
+        function calculateScore() {
+            let correct = 0;
+            quizData.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) correct++;
+            });
+            return correct;
+        }
+
+        function updateScoreDisplay() {
+            const score = calculateScore();
+            document.getElementById('scoreDisplay').innerText = `${score}/${quizData.length}`;
+        }
+
+        document.getElementById('submitQuizBtn').addEventListener('click', function() {
+            updateScoreDisplay();
+            alert(`आपने ${calculateScore()}/${quizData.length} सही जवाब दिए!`);
+        });
+
+        document.getElementById('resetQuizBtn').addEventListener('click', function() {
+            userAnswers = new Array(quizData.length).fill(null);
+            // uncheck all radios
+            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            document.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('selected'));
+            document.getElementById('scoreDisplay').innerText = `0/${quizData.length}`;
+        });
+
+        // ---------- CHAT AI BRANDS (famous & reliable) ----------
+        const aiBrands = [
+            {
+                id: 'chatgpt',
+                name: 'ChatGPT',
+                icon: '🤖',
+                description: 'OpenAI',
+                color: '#10a37f',
+                responses: [
+                    "That's interesting! I'm ChatGPT, here to help explore ideas.",
+                    "As an AI by OpenAI, I can assist with learning. Can you elaborate?",
+                    "बिल्कुल! मैं आपकी शंका समझ सकता हूँ। कृपया विस्तार से बताएं।",
+                    "I love educational quizzes! Tell me more about your edu idea.",
+                ]
+            },
+            {
+                id: 'gemini',
+                name: 'Gemini',
+                icon: '🔮',
+                description: 'Google',
+                color: '#1a73e8',
+                responses: [
+                    "Greetings from Google's Gemini! How can I assist your learning?",
+                    "मैं Gemini हूँ – आपके सवों का जवाब देने के लिए तैयार।",
+                    "AI evolves fast! What would you like to know about famous models?",
+                    "I can simulate multi-turn chat. Feel free to ask anything.",
+                ]
+            },
+            {
+                id: 'claude',
+                name: 'Claude',
+                icon: '🌿',
+                description: 'Anthropic',
+                color: '#9c6b3f',
+                responses: [
+                    "Hello, I'm Claude from Anthropic. How can I help with your project?",
+                    "नमस्ते! मैं क्लाउड – सवाल पूछिए और हम मिलकर सीखेंगे।",
+                    "I'm known for long context. Want to discuss AI safety or brands?",
+                    "That's a thoughtful question! Let's explore together.",
+                ]
+            }
+        ];
+
+        // store conversation history per AI (array of {sender:'user' or 'ai', text})
+        const conversations = {
+            chatgpt: [{ sender: 'ai', text: "Hi! I'm ChatGPT. Ask me about famous AI brands." }],
+            gemini: [{ sender: 'ai', text: "Namaste! Gemini here. Ready for a quiz chat?" }],
+            claude: [{ sender: 'ai', text: "Hello, this is Claude. How can I assist your edu idea?" }]
+        };
+
+        // function to render all chat cards
+        function renderChats() {
+            const grid = document.getElementById('aiChatGrid');
+            let cardsHtml = '';
+
+            aiBrands.forEach(brand => {
+                const conv = conversations[brand.id];
+                const messagesHtml = conv.map(msg => {
+                    const cls = msg.sender === 'user' ? 'msg-user' : 'msg-ai';
+                    return `<div class="msg-row"><div class="${cls}">${msg.text}</div></div>`;
+                }).join('');
+
+                cardsHtml += `
+                    <div class="ai-card" id="card-${brand.id}" data-brand="${brand.id}">
+                        <div class="ai-brand">
+                            <div class="brand-icon" style="background: ${brand.color};">${brand.icon}</div>
+                            <span class="brand-name">${brand.name}</span>
+                            <span style="font-size:0.8rem; background: #e5eef9; padding:4px 8px; border-radius:60px; margin-left: auto;">${brand.description}</span>
+                        </div>
+                        <div class="chat-messages" id="msg-${brand.id}">
+                            ${messagesHtml}
+                        </div>
+                        <div class="ai-input-area">
+                            <input type="text" placeholder="अपना संदेश लिखें..." id="input-${brand.id}">
+                            <button data-brand="${brand.id}" class="send-chat-btn">➤</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = cardsHtml;
+
+            // attach send event to each button
+            document.querySelectorAll('.send-chat-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const brandId = this.dataset.brand;
+                    sendMessage(brandId);
+                });
+            });
+
+            // attach enter key on inputs
+            aiBrands.forEach(b => {
+                const inp = document.getElementById(`input-${b.id}`);
+                if (inp) {
+                    inp.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            sendMessage(b.id);
+                        }
+                    });
+                }
+            });
+        }
+
+        // send message handler
+        function sendMessage(brandId) {
+            const inputField = document.getElementById(`input-${brandId}`);
+            const msgText = inputField.value.trim();
+            if (msgText === '') return;
+
+            // push user message
+            conversations[brandId].push({ sender: 'user', text: msgText });
+            inputField.value = '';
+
+            // scroll message box to bottom after adding user message
+            const msgBox = document.getElementById(`msg-${brandId}`);
+            updateChatWindow(brandId);
+
+            // simulate AI response after short delay (realistic)
+            setTimeout(() => {
+                generateAiReply(brandId, msgText);
+            }, 600 + Math.random() * 400);
+        }
+
+        // generate a mock ai reply based on brand and user message
+        function generateAiReply(brandId, userMessage) {
+            const brand = aiBrands.find(b => b.id === brandId);
+            if (!brand) return;
+
+            let reply = '';
+            const lowerMsg = userMessage.toLowerCase();
+
+            // very simple keyword logic to make it feel a bit brand-specific
+            if (brandId === 'chatgpt') {
+                if (lowerMsg.includes('openai') || lowerMsg.includes('gpt')) reply = 'OpenAI developed me, yes! I can help with AI concepts.';
+                else if (lowerMsg.includes('quiz')) reply = 'Quizzes are fun! Which AI brand question do you have?';
+                else reply = brand.responses[Math.floor(Math.random() * brand.responses.length)];
+            }
+            else if (brandId === 'gemini') {
+                if (lowerMsg.includes('google') || lowerMsg.includes('gemini')) reply = 'Google’s Gemini is built for multimodal understanding. Want to learn more?';
+                else if (lowerMsg.includes('hello') || lowerMsg.includes('नमस्ते')) reply = 'Namaste! मैं आपके सवालों का इंतज़ार कर रहा हूँ।';
+                else reply = brand.responses[Math.floor(Math.random() * brand.responses.length)];
+            }
+            else if (brandId === 'claude') {
+                if (lowerMsg.includes('context') || lowerMsg.includes('token')) reply = 'Claude can handle up to 1M tokens! Great for long docs.';
+                else if (lowerMsg.includes('anthropic')) reply = 'Anthropic focuses on AI safety. I’m their assistant Claude.';
+                else reply = brand.responses[Math.floor(Math.random() * brand.responses.length)];
+            }
+
+            // ensure reply not empty
+            if (!reply) reply = "Interesting! Tell me more about your edu idea.";
+
+            conversations[brandId].push({ sender: 'ai', text: reply });
+            updateChatWindow(brandId);
+        }
+
+        function updateChatWindow(brandId) {
+            const msgBox = document.getElementById(`msg-${brandId}`);
+            if (!msgBox) return;
+            const conv = conversations[brandId];
+            msgBox.innerHTML = conv.map(msg => {
+                const cls = msg.sender === 'user' ? 'msg-user' : 'msg-ai';
+                return `<div class="msg-row"><div class="${cls}">${msg.text}</div></div>`;
+            }).join('');
+            // auto scroll to bottom
+            msgBox.scrollTop = msgBox.scrollHeight;
+        }
+
+        // initial render
+        renderQuiz();
+        renderChats();
+
+        // attach extra listeners for already rendered radios (for initial selection style)
+        // renderQuiz already does it; but we also need to update score display on radio change to keep fresh
+        document.querySelectorAll('input[type="radio"]').forEach(r => {
+            r.addEventListener('change', function() {
+                updateScoreDisplay(); // live score update without submit
+            });
+        });
+
+        // Also initial score display
+        updateScoreDisplay();
+
+        // for better UX: allow enter in quiz? not needed
+
+        // ensure that after reset, score updates
+        // reset button already does that
+
+        // extra thing: "चीज़ें जोड़ दीजिए" — we already added footer note, three chats, quiz, live score
+        // additionally, we can add a small tooltip that these are simulated.
+    })();
+</script>
+
+<!-- additional style for smoothness -->
+<style>
+    /* subtle scrollbar */
+    .chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+    .chat-messages::-webkit-scrollbar-track {
+        background: #d9e2ec;
+        border-radius: 10px;
+    }
+    .chat-messages::-webkit-scrollbar-thumb {
+        background: #1e4a6f;
+        border-radius: 10px;
+    }
+    .option-item input[type="radio"] {
+        cursor: pointer;
+    }
+    .btn:active {
+        transform: scale(0.98);
+    }
+</style>
+</body>
+</html>
