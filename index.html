@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ ज्ञानमंडलम् · क्षैतिज स्क्रॉल पट्टियाँ</title>
+  <!-- Google Fonts & Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 10% 30%, #e2e9ff, #cbd5f0 70%, #b7c4e6);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* टॉप बार (क्षैतिज स्क्रॉल के साथ) */
+    .top-bar {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.6);
+      padding: 0.8rem 1rem;
+      box-shadow: 0 4px 20px -10px rgba(0,20,40,0.2);
+      z-index: 40;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      height: 70px;
+      display: flex;
+      align-items: center;
+    }
+
+    .top-bar::-webkit-scrollbar {
+      height: 5px;
+    }
+    .top-bar::-webkit-scrollbar-thumb {
+      background: rgba(0,40,80,0.3);
+      border-radius: 10px;
+    }
+
+    .top-btn-container {
+      display: inline-flex;
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
+
+    .top-btn {
+      background: transparent;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #002456;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      white-space: nowrap;
+    }
+    .top-btn i {
+      font-size: 1.3rem;
+    }
+    .top-btn:hover {
+      background: rgba(255,255,255,0.7);
+    }
+    .top-btn.active {
+      background: #1f4287;
+      color: white;
+      box-shadow: 0 10px 20px -8px #02275e;
+    }
+
+    /* मुख्य स्क्रॉल करने योग्य क्षेत्र */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem 2rem;
+      background: transparent;
+      scroll-behavior: smooth;
+    }
+
+    /* कार्ड कंटेनर */
+    .stack {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .section-card {
+      display: none;
+    }
+    .section-card.active-section {
+      display: block;
+    }
+
+    /* कार्ड नेओमॉर्फिक + ग्लास */
+    .divine-card {
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 2.5rem;
+      padding: 1.8rem 1.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 15px 20px 40px -20px #1e3b5e, -10px -10px 30px -10px rgba(255,255,255,0.7) inset;
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1), box-shadow 0.4s;
+      width: 100%;
+      position: relative;
+    }
+    .divine-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 20px 30px 50px -25px #0b2640, -10px -10px 40px -8px #ffffff inset;
+    }
+
+    /* फुल-स्क्रीन मोड (केवल मुख्य क्षेत्र के अंदर) */
+    .divine-card.fullscreen-mode {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 100;
+      border-radius: 0;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      margin: 0;
+      transform: none;
+    }
+    .fullscreen-close {
+      display: none;
+      position: sticky;
+      top: 1rem;
+      float: right;
+      font-size: 2rem;
+      color: #002f6e;
+      background: white;
+      border-radius: 50%;
+      width: 3rem;
+      height: 3rem;
+      text-align: center;
+      line-height: 3rem;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      border: 1px solid white;
+      z-index: 101;
+      margin-bottom: 1rem;
+    }
+    .divine-card.fullscreen-mode .fullscreen-close {
+      display: block;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #152b44;
+      border-bottom: 4px solid rgba(95, 138, 211, 0.5);
+      padding-bottom: 0.6rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .card-header i {
+      background: linear-gradient(135deg, #ffffff, #ecf3ff);
+      padding: 0.6rem;
+      border-radius: 50%;
+      color: #1d4b8b;
+      box-shadow: 0 10px 20px -8px #3865a8;
+    }
+    .fullscreen-icon {
+      position: absolute;
+      right: 0;
+      top: 0;
+      font-size: 1.4rem;
+      color: #1f4885;
+      cursor: pointer;
+      background: rgba(255,255,255,0.5);
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+    .fullscreen-icon:hover {
+      background: white;
+      transform: scale(1.1);
+    }
+
+    /* आर्टिकल कार्ड्स */
+    .article-elegant {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(4px);
+      border-radius: 2.2rem;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ffffff;
+      transition: all 0.25s;
+    }
+    .article-elegant:hover {
+      background: #ffffffdd;
+      border-color: #acc4f0;
+    }
+    .art-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #0c294b;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    .art-snippet {
+      color: #2f4262;
+      font-size: 0.9rem;
+      margin: 0.5rem 0;
+      line-height: 1.4;
+    }
+    .btn-soft {
+      background: #ffffffda;
+      border: 1.5px solid #a6bee6;
+      border-radius: 40px;
+      padding: 0.4rem 1.2rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #1c3e6b;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 3px 8px #acc3e9;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-soft:hover {
+      background: #ecf3ff;
+      border-color: #4b7ad0;
+      box-shadow: 0 8px 14px -6px #688bcc;
+    }
+    .btn-saved-custom {
+      background: #e2ecff;
+      border-color: #2760c4;
+      color: #022c62;
+    }
+
+    /* फॉर्म एलिमेंट्स */
+    .field-luxury {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      border-radius: 60px;
+      border: 2px solid rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.65);
+      font-size: 1rem;
+      margin: 0.7rem 0 1.2rem;
+      transition: 0.2s;
+      box-shadow: 0 6px 14px #d5e2fd inset, 0 2px 4px #ffffff;
+    }
+    .field-luxury:focus {
+      outline: none;
+      border-color: #1f57b3;
+      background: #ffffffee;
+      box-shadow: 0 0 0 6px rgba(62, 131, 255, 0.15);
+    }
+    textarea.field-luxury {
+      border-radius: 30px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(105deg, #1a3875, #2d5096);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.8rem 2rem;
+      border-radius: 60px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 25px 35px -16px #003182, 0 2px 4px #ffffff inset;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,0.5);
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(105deg, #23468b, #3662b3);
+      transform: scale(0.98);
+      box-shadow: 0 18px 30px -14px #001d65;
+    }
+    .btn-secondary {
+      background: #ffffffb3;
+      color: #002b5e;
+      border: 2px solid #799ed6;
+      box-shadow: 0 10px 15px -10px #1f3a70;
+    }
+    .btn-secondary:hover {
+      background: #e1edff;
+    }
+
+    .file-drop-area {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50px;
+      padding: 0.5rem 1.2rem;
+      border: 2px dashed #7a9ed6;
+      margin: 0.8rem 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* क्विज़ कार्ड लग्जरी */
+    .quiz-luxury {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(4px);
+      border-radius: 2rem;
+      padding: 1.5rem;
+      margin: 1.2rem 0;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 20px 35px -20px #1f3d6b;
+    }
+    .quiz-question-lux {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #002456;
+      margin-bottom: 1rem;
+    }
+    .opt-item {
+      background: #ffffffb8;
+      border-radius: 40px;
+      padding: 0.7rem 1.5rem;
+      margin: 0.6rem 0;
+      border: 1px solid #aac2ec;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .opt-item input[type="radio"] {
+      accent-color: #1e4c9c;
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+    .correct-badge {
+      background: #12805c;
+      color: white;
+      border-radius: 30px;
+      padding: 0.2rem 1rem;
+      font-size: 0.7rem;
+      margin-left: 0.5rem;
+    }
+    .explain-lux {
+      background: #e2edff;
+      border-radius: 40px;
+      padding: 1rem 1.8rem;
+      margin-top: 1rem;
+      border-left: 8px solid #2e5db3;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .empty-msg {
+      color: #52719c;
+      font-style: italic;
+      padding: 0.8rem;
+    }
+
+    hr.glass-hr {
+      border: none;
+      height: 2px;
+      background: linear-gradient(to right, transparent, #ffffff, #acc1e6, transparent);
+      margin: 1.5rem 0 1rem 0;
+    }
+
+    .saved-quiz-item {
+      background: #e5efff;
+      border-radius: 2rem;
+      padding: 0.7rem 1.2rem;
+      margin: 0.6rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid white;
+    }
+    .saved-quiz-title {
+      font-weight: 600;
+      color: #0b2b53;
+      cursor: pointer;
+    }
+    .delete-quiz {
+      color: #b22234;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    /* बॉटम बार (क्षैतिज स्क्रॉल के साथ) */
+    .bottom-bar {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255,255,255,0.6);
+      padding: 0.6rem 1rem;
+      box-shadow: 0 -4px 20px -10px rgba(0,20,40,0.2);
+      z-index: 40;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      height: 80px;
+      display: flex;
+      align-items: center;
+    }
+
+    .bottom-bar::-webkit-scrollbar {
+      height: 5px;
+    }
+    .bottom-bar::-webkit-scrollbar-thumb {
+      background: rgba(0,40,80,0.3);
+      border-radius: 10px;
+    }
+
+    .bottom-icon-container {
+      display: inline-flex;
+      gap: 2rem;
+      padding: 0 1rem;
+    }
+
+    .bottom-icon {
+      background: transparent;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 50%;
+      font-size: 2rem;
+      color: #002456;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 4rem;
+      height: 4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+    .bottom-icon:hover {
+      background: rgba(255,255,255,0.7);
+    }
+    .bottom-icon.active {
+      background: #1f4287;
+      color: white;
+      box-shadow: 0 10px 20px -8px #02275e;
+    }
+
+    /* जब फुल-स्क्रीन हो तब भी बार दिखें */
+    .fullscreen-mode .fullscreen-close {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- टॉप बार (क्षैतिज स्क्रॉल) -->
+  <div class="top-bar">
+    <div class="top-btn-container">
+      <button class="top-btn active" data-section="articles"><i class="fas fa-scroll"></i> लेख</button>
+      <button class="top-btn" data-section="saved"><i class="fas fa-bookmark"></i> सहेजे गए</button>
+      <button class="top-btn" data-section="ai"><i class="fas fa-robot"></i> AI सहायक</button>
+      <button class="top-btn" data-section="quiz"><i class="fas fa-puzzle-piece"></i> क्विज़ स्टूडियो</button>
+      <button class="top-btn" data-section="stats"><i class="fas fa-chart-bar"></i> आँकड़े</button>
+      <button class="top-btn" data-section="settings"><i class="fas fa-cog"></i> सेटिंग्स</button>
+    </div>
+  </div>
+
+  <!-- मुख्य स्क्रॉल करने योग्य क्षेत्र -->
+  <div class="main-content" id="mainContent">
+    <div class="stack">
+      <!-- सेक्शन 1: लेख -->
+      <div class="section-card active-section" id="section-articles">
+        <div class="divine-card" id="card1">
+          <div class="card-header">
+            <i class="fas fa-scroll"></i> सभी लेख
+            <span class="fullscreen-icon" onclick="toggleFullScreen('card1')"><i class="fas fa-expand"></i></span>
+          </div>
+          <div id="allArticles"></div>
+          <hr class="glass-hr">
+          <div class="card-header" style="font-size: 1.4rem;"><i class="fas fa-feather-alt"></i> नया लेख</div>
+          <form id="publishForm">
+            <input class="field-luxury" type="text" id="titleInput" placeholder="शीर्षक (उदा. ध्यान के लाभ)" required>
+            <textarea class="field-luxury" id="contentInput" placeholder="लेख सामग्री..." rows="2" required></textarea>
+            <button class="btn-primary" type="submit"><i class="fas fa-cloud-upload-alt"></i> प्रकाशित करें</button>
+          </form>
+          <span class="fullscreen-close" onclick="toggleFullScreen('card1')"><i class="fas fa-times"></i></span>
+        </div>
+      </div>
+
+      <!-- सेक्शन 2: सहेजे गए लेख -->
+      <div class="section-card" id="section-saved">
+        <div class="divine-card" id="card2">
+          <div class="card-header">
+            <i class="fas fa-bookmark"></i> सहेजे गए लेख
+            <span class="fullscreen-icon" onclick="toggleFullScreen('card2')"><i class="fas fa-expand"></i></span>
+          </div>
+          <div id="savedArticles"></div>
+          <span class="fullscreen-close" onclick="toggleFullScreen('card2')"><i class="fas fa-times"></i></span>
+        </div>
+      </div>
+
+      <!-- सेक्शन 3: AI सहायक -->
+      <div class="section-card" id="section-ai">
+        <div class="divine-card" id="card3">
+          <div class="card-header">
+            <i class="fas fa-robot"></i> AI सहायक
+            <span class="fullscreen-icon" onclick="toggleFullScreen('card3')"><i class="fas fa-expand"></i></span>
+          </div>
+          <p style="color: #1c3f64; margin-bottom:0.5rem;"><i class="fas fa-quote-left"></i> आपके लेखों पर आधारित</p>
+          <input class="field-luxury" type="text" id="queryInput" placeholder="कोई सवाल पूछें..." value="कृत्रिम बुद्धि क्या है?">
+          <button class="btn-primary" id="askButton"><i class="fas fa-search"></i> पूछें</button>
+          <div class="quiz-luxury" id="aiAnswerBox" style="min-height: 70px;">🤖 उत्तर यहाँ दिखेगा...</div>
+          <span class="fullscreen-close" onclick="toggleFullScreen('card3')"><i class="fas fa-times"></i></span>
+        </div>
+      </div>
+
+      <!-- सेक्शन 4: क्विज़ स्टूडियो -->
+      <div class="section-card" id="section-quiz">
+        <div class="divine-card" id="card4">
+          <div class="card-header">
+            <i class="fas fa-puzzle-piece"></i> एमसीक्यू स्टूडियो
+            <span class="fullscreen-icon" onclick="toggleFullScreen('card4')"><i class="fas fa-expand"></i></span>
+          </div>
+          <div class="file-drop-area">
+            <i class="fas fa-images" style="font-size: 1.4rem; color: #2e558a;"></i>
+            <input type="file" id="quizFileInput" accept=".txt, image/*" style="background: none; border: none; width: 100%;">
+          </div>
+          <div id="fileStatus" style="margin:0 0 0.5rem 1.2rem; color:#2b4575; font-size:0.9rem;"><i class="fas fa-info-circle"></i> कोई फ़ाइल नहीं</div>
+          <textarea class="field-luxury" id="quizTextArea" placeholder="यहाँ टेक्स्ट लिखें या पेस्ट करें..." rows="3">नियमित व्यायाम से हृदय स्वस्थ रहता है। प्रतिदिन कम से कम 30 मिनट टहलें। संतुलित भोजन में प्रोटीन और विटामिन जरूरी हैं।</textarea>
+          <div style="display: flex; flex-wrap: wrap; gap:0.5rem;">
+            <button class="btn-primary" id="generateQuizBtn"><i class="fas fa-magic"></i> क्विज़ बनाएँ</button>
+            <button class="btn-primary btn-secondary" id="saveQuizBtn" style="display: none;"><i class="fas fa-save"></i> सहेजें</button>
+          </div>
+
+          <!-- सहेजे गए क्विज़ की सूची -->
+          <div style="margin-top: 2rem;">
+            <div class="card-header" style="font-size: 1.4rem;"><i class="fas fa-archive"></i> सहेजे गए क्विज़</div>
+            <div id="savedQuizzesList"></div>
+          </div>
+
+          <!-- क्विज़ परिणाम -->
+          <div id="quizOutput"></div>
+          <span class="fullscreen-close" onclick="toggleFullScreen('card4')"><i class="fas fa-times"></i></span>
+        </div>
+      </div>
+
+      <!-- सेक्शन 5: आँकड़े (डेमो) -->
+      <div class="section-card" id="section-stats">
+        <div class="divine-card">
+          <div class="card-header"><i class="fas fa-chart-bar"></i> आँकड़े</div>
+          <p>यहाँ आपके लेखों और क्विज़ के आँकड़े दिखेंगे।</p>
+        </div>
+      </div>
+
+      <!-- सेक्शन 6: सेटिंग्स (डेमो) -->
+      <div class="section-card" id="section-settings">
+        <div class="divine-card">
+          <div class="card-header"><i class="fas fa-cog"></i> सेटिंग्स</div>
+          <p>यहाँ ऐप सेटिंग्स होंगी।</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- बॉटम बार (क्षैतिज स्क्रॉल) -->
+  <div class="bottom-bar">
+    <div class="bottom-icon-container">
+      <div class="bottom-icon active" data-section="articles"><i class="fas fa-scroll"></i></div>
+      <div class="bottom-icon" data-section="saved"><i class="fas fa-bookmark"></i></div>
+      <div class="bottom-icon" data-section="ai"><i class="fas fa-robot"></i></div>
+      <div class="bottom-icon" data-section="quiz"><i class="fas fa-puzzle-piece"></i></div>
+      <div class="bottom-icon" data-section="stats"><i class="fas fa-chart-bar"></i></div>
+      <div class="bottom-icon" data-section="settings"><i class="fas fa-cog"></i></div>
+    </div>
+  </div>
+
+  <script>
+    // फुल-स्क्रीन टॉगल फ़ंक्शन
+    window.toggleFullScreen = function(cardId) {
+      const card = document.getElementById(cardId);
+      if (card.classList.contains('fullscreen-mode')) {
+        card.classList.remove('fullscreen-mode');
+        document.querySelector('.main-content').style.overflow = 'auto';
+      } else {
+        document.querySelectorAll('.divine-card.fullscreen-mode').forEach(c => c.classList.remove('fullscreen-mode'));
+        card.classList.add('fullscreen-mode');
+        document.querySelector('.main-content').style.overflow = 'hidden';
+      }
+    };
+
+    (function() {
+      // ---------- डेटा ----------
+      let articles = [
+        { id: 1, title: "🤖 आर्टिफिशियल इंटेलिजेंस", content: "AI मशीनों में मानव बुद्धि का अनुकरण है। इसमें मशीन लर्निंग, डीप लर्निंग, नेचुरल लैंग्वेज प्रोसेसिंग शामिल हैं। यह चिकित्सा, शिक्षा और उद्योग में क्रांति ला रहा है।", saved: true },
+        { id: 2, title: "🥗 स्वस्थ आहार", content: "ताजे फल, हरी सब्जियां, साबुत अनाज और पर्याप्त जल स्वास्थ्य के लिए आवश्यक हैं। जंक फूड से बचें और भोजन समय पर करें।", saved: false },
+        { id: 3, title: "🧘 योग एवं ध्यान", content: "योग से शरीर लचीला बनता है और ध्यान से मानसिक शांति मिलती है। प्रतिदिन 10 मिनट प्राणायाम करें।", saved: true },
+        { id: 4, title: "🌐 वेब विकास मूल बातें", content: "HTML, CSS और JavaScript वेब की रीढ़ हैं। फ्रंटएंड के लिए React, बैकएंड के लिए Node.js लोकप्रिय हैं।", saved: false }
+      ];
+
+      let currentMCQs = [];
+      let savedQuizzes = JSON.parse(localStorage.getItem('savedQuizzes')) || [];
+
+      // DOM रेफरेंस
+      const allDiv = document.getElementById('allArticles');
+      const savedDiv = document.getElementById('savedArticles');
+      const quizOutput = document.getElementById('quizOutput');
+      const saveQuizBtn = document.getElementById('saveQuizBtn');
+      const savedQuizzesList = document.getElementById('savedQuizzesList');
+
+      function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, function(m) {
+          if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;';
+          if(m === '"') return '&quot;'; return '&#039;';
+        });
+      }
+
+      // रेंडर सभी लेख और सहेजे गए
+      function renderEverything() {
+        // सभी लेख
+        if (!articles.length) allDiv.innerHTML = '<div class="empty-msg"><i class="fas fa-box-open"></i> कोई लेख नहीं</div>';
+        else {
+          let html = '';
+          articles.forEach(a => {
+            html += `
+              <div class="article-elegant" data-id="${a.id}">
+                <div class="art-title"><i class="fas fa-file-alt" style="color:#254f87;"></i> ${escapeHTML(a.title)}</div>
+                <div class="art-snippet">${escapeHTML(a.content.substring(0,70))}…</div>
+                <div><button class="btn-soft save-toggle ${a.saved ? 'btn-saved-custom' : ''}" data-id="${a.id}"><i class="fas fa-${a.saved ? 'bookmark' : 'bookmark'}"></i> ${a.saved ? 'सहेजा हुआ' : 'सहेजें'}</button></div>
+              </div>`;
+          });
+          allDiv.innerHTML = html;
+        }
+
+        // सहेजे गए लेख
+        const savedArts = articles.filter(a => a.saved);
+        if (!savedArts.length) savedDiv.innerHTML = '<div class="empty-msg"><i class="far fa-bookmark"></i> कोई सहेजा लेख नहीं</div>';
+        else {
+          let shtml = '';
+          savedArts.forEach(s => {
+            shtml += `
+              <div class="article-elegant" style="background:#eaf1ff">
+                <div class="art-title"><i class="fas fa-bookmark" style="color:#1f4d92;"></i> ${escapeHTML(s.title)}</div>
+                <div class="art-snippet">${escapeHTML(s.content.substring(0,60))}…</div>
+                <button class="btn-soft btn-saved-custom save-toggle" data-id="${s.id}"><i class="fas fa-bookmark"></i> हटाएँ</button>
+              </div>`;
+          });
+          savedDiv.innerHTML = shtml;
+        }
+
+        // अटैच इवेंट्स
+        document.querySelectorAll('.save-toggle').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = Number(e.currentTarget.dataset.id);
+            const art = articles.find(a => a.id === id);
+            if (art) { art.saved = !art.saved; renderEverything(); }
+          });
+        });
+      }
+
+      // प्रकाशन
+      document.getElementById('publishForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const t = document.getElementById('titleInput').value.trim();
+        const c = document.getElementById('contentInput').value.trim();
+        if (!t || !c) return;
+        const newId = articles.length ? Math.max(...articles.map(a=>a.id)) + 1 : 1;
+        articles.push({ id: newId, title: t, content: c, saved: false });
+        document.getElementById('titleInput').value = '';
+        document.getElementById('contentInput').value = '';
+        renderEverything();
+      });
+
+      // AI प्रश्न
+      document.getElementById('askButton').addEventListener('click', () => {
+        const q = document.getElementById('queryInput').value.trim().toLowerCase();
+        const ansBox = document.getElementById('aiAnswerBox');
+        if (!q) { ansBox.innerHTML = '❓ कुछ लिखें'; return; }
+        const match = articles.find(a => a.title.toLowerCase().includes(q) || a.content.toLowerCase().includes(q));
+        if (match) ansBox.innerHTML = `<i class="fas fa-lightbulb" style="color:#1f5090;"></i> <strong>${escapeHTML(match.title)}</strong><br>${escapeHTML(match.content.substring(0,250))}`;
+        else ansBox.innerHTML = '😕 कोई संबंधित लेख नहीं मिला।';
+      });
+
+      // ---------- क्विज़ जनरेटर ----------
+      const fileInp = document.getElementById('quizFileInput');
+      const fileStatus = document.getElementById('fileStatus');
+      const quizTA = document.getElementById('quizTextArea');
+      const genBtn = document.getElementById('generateQuizBtn');
+
+      fileInp.addEventListener('change', function(e) {
+        const f = e.target.files[0];
+        if (!f) { fileStatus.innerHTML = '<i class="fas fa-info-circle"></i> कोई फ़ाइल नहीं'; return; }
+        if (f.type.startsWith('image/')) {
+          quizTA.value = `[इमेज OCR सिमुलेशन] पर्यावरण संरक्षण जरूरी है। प्लास्टिक कम करें। वृक्ष लगाएं। जल बचाएं। प्रदूषण नियंत्रण हेतु सार्वजनिक परिवहन अपनाएं।`;
+          fileStatus.innerHTML = `<i class="fas fa-image"></i> ${f.name} (सिम्युलेटेड)`;
+        } else if (f.type === 'text/plain' || f.name.endsWith('.txt')) {
+          const r = new FileReader();
+          r.onload = (ev) => { quizTA.value = ev.target.result; };
+          r.readAsText(f);
+          fileStatus.innerHTML = `<i class="fas fa-file-alt"></i> ${f.name} लोड हुआ`;
+        } else alert('कृपया .txt या इमेज फ़ाइल चुनें');
+      });
+
+      function generateMCQ(text) {
+        if (!text.trim()) return [];
+        const sentences = text.split(/[.!?।]+/).map(s => s.trim()).filter(s => s.length > 5).slice(0, 10);
+        if (sentences.length === 0) return [];
+
+        let mcqs = [];
+        sentences.forEach((sen, idx) => {
+          let others = sentences.filter((_, i) => i !== idx);
+          while (others.length < 3) others.push('उपरोक्त में से कोई नहीं', 'यह गलत है', 'पाठ समर्थन नहीं करता');
+          let dist = [...others].sort(() => 0.5 - Math.random()).slice(0, 3);
+          let options = [sen, ...dist];
+          let shuffled = options.map((opt, i) => ({ opt, i }));
+          shuffled.sort(() => Math.random() - 0.5);
+          let finalOpts = shuffled.map(o => o.opt);
+          let correctIdx = shuffled.findIndex(o => o.i === 0);
+          mcqs.push({
+            question: `प्रश्न ${idx+1}: इस वाक्य का सही विकल्प पहचानें –`,
+            options: finalOpts,
+            correct: correctIdx,
+            explanation: `✅ सही उत्तर वही है जो पाठ से लिया गया है: "${sen}"`
+          });
+        });
+        return mcqs;
+      }
+
+      function displayMCQ(mcqs) {
+        if (!mcqs.length) { quizOutput.innerHTML = '<div class="quiz-luxury">❌ पर्याप्त टेक्स्ट नहीं</div>'; saveQuizBtn.style.display = 'none'; return; }
+        let h = '<h3 style="color:#00255a;"><i class="fas fa-question-circle"></i> जनरेटेड एमसीक्यू</h3>';
+        mcqs.forEach((q, i) => {
+          h += `<div class="quiz-luxury">`;
+          h += `<div class="quiz-question-lux">${q.question}</div>`;
+          q.options.forEach((opt, oi) => {
+            h += `<div class="opt-item" style="background:${oi === q.correct ? '#d9f0e5' : '#ffffffb8'}">`;
+            h += `<input type="radio" name="q${i}" ${oi === q.correct ? 'checked' : ''} disabled> ${opt}`;
+            if (oi === q.correct) h += `<span class="correct-badge"><i class="fas fa-check"></i> सही</span>`;
+            h += `</div>`;
+          });
+          h += `<div class="explain-lux"><i class="fas fa-lightbulb"></i> ${q.explanation}</div>`;
+          h += `</div>`;
+        });
+        quizOutput.innerHTML = h;
+        saveQuizBtn.style.display = 'inline-flex';
+        currentMCQs = mcqs;
+      }
+
+      genBtn.addEventListener('click', () => {
+        const txt = quizTA.value.trim();
+        if (!txt) { quizOutput.innerHTML = '<div class="quiz-luxury">⚠️ कृपया टेक्स्ट लिखें</div>'; saveQuizBtn.style.display = 'none'; return; }
+        const mcqs = generateMCQ(txt);
+        displayMCQ(mcqs);
+      });
+
+      // सहेजे गए क्विज़ फ़ंक्शन
+      function saveQuizToStorage() {
+        if (!currentMCQs.length) return;
+        const title = prompt('इस क्विज़ के लिए एक नाम दें:', 'क्विज़ ' + (savedQuizzes.length+1));
+        if (!title) return;
+        const newQuiz = { id: Date.now(), title: title, mcqs: currentMCQs };
+        savedQuizzes.push(newQuiz);
+        localStorage.setItem('savedQuizzes', JSON.stringify(savedQuizzes));
+        renderSavedQuizzes();
+      }
+
+      function deleteSavedQuiz(id) {
+        savedQuizzes = savedQuizzes.filter(q => q.id !== id);
+        localStorage.setItem('savedQuizzes', JSON.stringify(savedQuizzes));
+        renderSavedQuizzes();
+      }
+
+      function loadQuizFromStorage(quiz) {
+        displayMCQ(quiz.mcqs);
+      }
+
+      function renderSavedQuizzes() {
+        if (!savedQuizzes.length) {
+          savedQuizzesList.innerHTML = '<div class="empty-msg"><i class="fas fa-box"></i> कोई सहेजा क्विज़ नहीं</div>';
+          return;
+        }
+        let html = '';
+        savedQuizzes.forEach(q => {
+          html += `
+            <div class="saved-quiz-item">
+              <span class="saved-quiz-title" data-id="${q.id}"><i class="fas fa-file-powerpoint"></i> ${escapeHTML(q.title)}</span>
+              <button class="delete-quiz" data-id="${q.id}"><i class="fas fa-trash-alt"></i></button>
+            </div>`;
+        });
+        savedQuizzesList.innerHTML = html;
+
+        document.querySelectorAll('.saved-quiz-title').forEach(el => {
+          el.addEventListener('click', (e) => {
+            const id = Number(e.currentTarget.dataset.id);
+            const quiz = savedQuizzes.find(q => q.id === id);
+            if (quiz) loadQuizFromStorage(quiz);
+          });
+        });
+        document.querySelectorAll('.delete-quiz').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = Number(e.currentTarget.dataset.id);
+            deleteSavedQuiz(id);
+          });
+        });
+      }
+
+      saveQuizBtn.addEventListener('click', saveQuizToStorage);
+
+      // ---------- सेक्शन स्विचिंग ----------
+      const sections = {
+        articles: document.getElementById('section-articles'),
+        saved: document.getElementById('section-saved'),
+        ai: document.getElementById('section-ai'),
+        quiz: document.getElementById('section-quiz'),
+        stats: document.getElementById('section-stats'),
+        settings: document.getElementById('section-settings')
+      };
+
+      function setActiveSection(sectionId) {
+        // सभी सेक्शन छुपाएँ
+        Object.values(sections).forEach(s => s?.classList.remove('active-section'));
+        // एक्टिव सेक्शन दिखाएँ
+        if (sections[sectionId]) sections[sectionId].classList.add('active-section');
+
+        // टॉप बटन अपडेट करें
+        document.querySelectorAll('.top-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.dataset.section === sectionId) btn.classList.add('active');
+        });
+
+        // बॉटम आइकन अपडेट करें
+        document.querySelectorAll('.bottom-icon').forEach(icon => {
+          icon.classList.remove('active');
+          if (icon.dataset.section === sectionId) icon.classList.add('active');
+        });
+
+        // अगर कोई फुल-स्क्रीन कार्ड खुला हो तो उसे बंद करें
+        document.querySelectorAll('.divine-card.fullscreen-mode').forEach(c => c.classList.remove('fullscreen-mode'));
+        document.querySelector('.main-content').style.overflow = 'auto';
+      }
+
+      // टॉप बटन पर क्लिक
+      document.querySelectorAll('.top-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          setActiveSection(btn.dataset.section);
+        });
+      });
+
+      // बॉटम आइकन पर क्लिक
+      document.querySelectorAll('.bottom-icon').forEach(icon => {
+        icon.addEventListener('click', () => {
+          setActiveSection(icon.dataset.section);
+        });
+      });
+
+      // प्रारंभिक रेंडर
+      renderEverything();
+      renderSavedQuizzes();
+      document.getElementById('aiAnswerBox').innerHTML = articles.find(a => a.id === 1)?.content || 'AI से जुड़ी जानकारी';
+      setTimeout(() => {
+        const initText = quizTA.value;
+        displayMCQ(generateMCQ(initText));
+      }, 100);
+    })();
+  </script>
+</body>
+</html>
