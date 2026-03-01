@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Primary Meta -->
+  <title>हिंदी क्विज़ ऐप</title>
+  <meta name="description" content="हिंदी में सामान्य ज्ञान, इतिहास, विज्ञान, भूगोल और अधिक विषयों की क्विज़ खेलें।" />
+  <meta name="theme-color" content="#4A0E8F" />
+  <meta name="author" content="हिंदी क्विज़" />
+  <meta name="keywords" content="हिंदी क्विज़, सामान्य ज्ञान, भारत, GK, quiz, hindi" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="हिंदी क्विज़" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <img src="icons/icon-192x192.png" alt="Logo" class="header-logo" />
+    <div class="header-text">
+      <h1>हिंदी क्विज़</h1>
+      <p class="subtitle">ज्ञान परखें • जीतें • आगे बढ़ें</p>
+    </div>
+  </header>
+
+  <!-- ── PWA Install Banner ── -->
+  <div id="installBanner">
+    <p>📱 इस app को अपने फ़ोन में install करें!</p>
+    <button id="installBtn" onclick="installApp()">Install करें</button>
+  </div>
+
+  <!-- ── Score Bar ── -->
+  <div class="score-bar" id="scoreBar">
+    <div class="score-item">
+      <div class="lbl">अंक</div>
+      <div class="val" id="scoreVal">0</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="score-item">
+      <div class="lbl">प्रश्न</div>
+      <div class="val" id="qNumBar">1/10</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ -->
+  <!--   SCREEN 1 — Home / Category  -->
+  <!-- ══════════════════════════════ -->
+  <div class="screen active" id="homeScreen">
+    <div class="screen-title">श्रेणी चुनें</div>
+
+    <div class="categories">
+      <div class="cat-card" onclick="startQuiz('सामान्य ज्ञान')">
+        <span class="cat-icon">🏛️</span>
+        <div class="cat-name">सामान्य ज्ञान</div>
+        <div class="cat-count">10 प्रश्न</div>
+      </div>
+      <div class="cat-card" onclick="startQuiz('इतिहास')">
+        <span class="cat-icon">📜</span>
+        <div class="cat-name">इतिहास</div>
+        <div class="cat-count">10 प्रश्न</div>
+      </div>
+      <div class="cat-card" onclick="startQuiz('विज्ञान')">
+        <span class="cat-icon">🔬</span>
+        <div class="cat-name">विज्ञान</div>
+        <div class="cat-count">10 प्रश्न</div>
+      </div>
+      <div class="cat-card" onclick="startQuiz('भूगोल')">
+        <span class="cat-icon">🌍</span>
+        <div class="cat-name">भूगोल</div>
+        <div class="cat-count">10 प्रश्न</div>
+      </div>
+      <div class="cat-card" onclick="startQuiz('हिंदी साहित्य')">
+        <span class="cat-icon">📖</span>
+        <div class="cat-name">हिंदी साहित्य</div>
+        <div class="cat-count">10 प्रश्न</div>
+      </div>
+      <div class="cat-card" onclick="startQuiz('खेलकूद')">
+        <span class="cat-icon">🏏</span>
+        <div class="cat-name">खेलकूद</div>
+        <div class="cat-count">10 प्रश्न</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ -->
+  <!--   SCREEN 2 — Quiz             -->
+  <!-- ══════════════════════════════ -->
+  <div class="screen" id="quizScreen">
+
+    <div class="timer-wrap">
+      <div class="timer" id="timerEl">
+        <span id="timerNum">15</span>
+      </div>
+    </div>
+
+    <div class="question-card">
+      <div class="q-num" id="qNum">प्रश्न 1 / 10</div>
+      <div class="q-text" id="qText"></div>
+      <span class="q-badge" id="qBadge"></span>
+    </div>
+
+    <div class="options" id="optionsContainer"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <button class="btn btn-primary" id="nextBtn" style="display:none" onclick="nextQuestion()">
+      अगला प्रश्न →
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════ -->
+  <!--   SCREEN 3 — Result           -->
+  <!-- ══════════════════════════════ -->
+  <div class="screen" id="resultScreen">
+
+    <div class="result-circle" id="resultCircle">
+      <div class="res-score" id="finalScore">0</div>
+      <div class="res-lbl">अंक</div>
+    </div>
+
+    <div class="result-title" id="resultTitle">शाबाश! 🎉</div>
+    <div class="result-message" id="resultMsg"></div>
+
+    <div class="stats-row">
+      <div class="stat-box stat-correct">
+        <div class="sv" id="correctCount">0</div>
+        <div class="sl">सही ✓</div>
+      </div>
+      <div class="stat-box stat-wrong">
+        <div class="sv" id="wrongCount">0</div>
+        <div class="sl">गलत ✗</div>
+      </div>
+      <div class="stat-box stat-pct">
+        <div class="sv" id="pctVal">0%</div>
+        <div class="sl">प्रतिशत</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="showHome()">फिर से खेलें 🔄</button>
+    <button class="btn btn-secondary" onclick="showHome()">नई श्रेणी चुनें</button>
+  </div>
+
+</div><!-- /container -->
+
+<!-- Scripts -->
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

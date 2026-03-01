@@ -1,0 +1,396 @@
+/* css/style.css — हिंदी क्विज़ ऐप Stylesheet */
+
+/* ── Google Fonts loaded in HTML ── */
+
+:root {
+  --saffron:  #FF6B35;
+  --deep:     #1A0A2E;
+  --purple:   #4A0E8F;
+  --gold:     #FFD700;
+  --mint:     #00F5A0;
+  --pink:     #FF3CAC;
+  --card:     #240D4A;
+  --text:     #F0E6FF;
+  --radius:   16px;
+  --transition: 0.25s ease;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Baloo 2', cursive;
+  background: var(--deep);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Background Gradient ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(74,14,143,.45) 0%, transparent 52%),
+    radial-gradient(ellipse at 80% 80%, rgba(255,107,53,.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(0,245,160,.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Layout ── */
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 16px 20px 40px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 28px 0 18px;
+  animation: slideDown .6s ease;
+}
+
+.header-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255,215,0,.5));
+}
+
+.header-text h1 {
+  font-family: 'Tiro Devanagari Hindi', serif;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  background: linear-gradient(135deg, var(--gold), var(--saffron), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+}
+
+.header-text .subtitle {
+  font-size: .8rem;
+  color: rgba(240,230,255,.55);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+/* ── Score Bar ── */
+.score-bar {
+  display: none;
+  align-items: center;
+  gap: 16px;
+  background: var(--card);
+  border: 1px solid rgba(255,215,0,.2);
+  border-radius: var(--radius);
+  padding: 14px 22px;
+  margin-bottom: 18px;
+  animation: fadeIn .4s ease;
+}
+
+.score-bar.show { display: flex; }
+
+.score-item { text-align: center; }
+.score-item .lbl {
+  font-size: .7rem;
+  color: rgba(240,230,255,.45);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.score-item .val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.progress-wrap {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--mint), var(--gold));
+  border-radius: 99px;
+  transition: width .5s ease;
+  width: 0%;
+}
+
+/* ── Screens ── */
+.screen { display: none; animation: fadeIn .4s ease; }
+.screen.active { display: block; }
+
+/* ── Screen Title ── */
+.screen-title {
+  font-family: 'Tiro Devanagari Hindi', serif;
+  font-size: 1.6rem;
+  text-align: center;
+  margin-bottom: 22px;
+  color: var(--text);
+}
+
+/* ── Category Grid ── */
+.categories {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.cat-card {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 20px;
+  padding: 22px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.cat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.cat-card:nth-child(1)::before { background: linear-gradient(135deg, rgba(255,107,53,.28), transparent); }
+.cat-card:nth-child(2)::before { background: linear-gradient(135deg, rgba(0,245,160,.28), transparent); }
+.cat-card:nth-child(3)::before { background: linear-gradient(135deg, rgba(255,60,172,.28), transparent); }
+.cat-card:nth-child(4)::before { background: linear-gradient(135deg, rgba(255,215,0,.28), transparent); }
+.cat-card:nth-child(5)::before { background: linear-gradient(135deg, rgba(74,14,143,.45), transparent); }
+.cat-card:nth-child(6)::before { background: linear-gradient(135deg, rgba(100,200,255,.28), transparent); }
+
+.cat-card:hover { transform: translateY(-4px); border-color: rgba(255,215,0,.4); box-shadow: 0 12px 36px rgba(0,0,0,.4); }
+.cat-card:hover::before { opacity: 1; }
+
+.cat-icon  { font-size: 2.3rem; margin-bottom: 8px; display: block; }
+.cat-name  { font-size: 1rem; font-weight: 700; color: var(--text); }
+.cat-count { font-size: .75rem; color: rgba(240,230,255,.45); margin-top: 3px; }
+
+/* ── Timer ── */
+.timer-wrap { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+
+.timer {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: conic-gradient(var(--saffron) var(--t, 100%), rgba(255,255,255,.08) 0%);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: .95rem;
+  position: relative;
+  transition: background .4s;
+}
+.timer::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--deep);
+}
+.timer span { position: relative; z-index: 1; }
+
+/* ── Question Card ── */
+.question-card {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 22px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.question-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--saffron), var(--pink), var(--mint));
+}
+
+.q-num   { font-size: .8rem; color: rgba(240,230,255,.38); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.q-text  { font-family: 'Tiro Devanagari Hindi', serif; font-size: clamp(1.1rem, 2.8vw, 1.5rem); line-height: 1.6; color: var(--text); }
+.q-badge {
+  display: inline-block;
+  background: rgba(255,215,0,.13);
+  color: var(--gold);
+  border-radius: 99px;
+  padding: 2px 12px;
+  font-size: .75rem;
+  margin-top: 10px;
+}
+
+/* ── Options ── */
+.options { display: grid; gap: 10px; margin-bottom: 20px; }
+
+.option-btn {
+  background: rgba(255,255,255,.04);
+  border: 1.5px solid rgba(255,255,255,.11);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: 'Tiro Devanagari Hindi', serif;
+  font-size: 1rem;
+  color: var(--text);
+  text-align: left;
+  width: 100%;
+}
+
+.opt-letter {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Baloo 2', cursive;
+  font-size: .8rem; font-weight: 700;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+
+.option-btn:hover:not(:disabled) {
+  background: rgba(255,215,0,.09);
+  border-color: rgba(255,215,0,.4);
+  transform: translateX(6px);
+}
+.option-btn:hover:not(:disabled) .opt-letter { background: var(--gold); color: var(--deep); }
+
+.option-btn.correct { background: rgba(0,245,160,.14); border-color: var(--mint); color: var(--mint); }
+.option-btn.correct .opt-letter { background: var(--mint); color: var(--deep); }
+.option-btn.wrong   { background: rgba(255,60,172,.12); border-color: var(--pink); color: var(--pink); opacity: .7; }
+.option-btn.wrong .opt-letter   { background: var(--pink); color: #fff; }
+.option-btn:disabled { cursor: not-allowed; }
+
+/* ── Feedback ── */
+.feedback {
+  display: none;
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+  animation: pop .3s ease;
+}
+.feedback.show { display: block; }
+.feedback.correct { background: rgba(0,245,160,.14); color: var(--mint); }
+.feedback.wrong   { background: rgba(255,60,172,.12); color: var(--pink); }
+.explanation      { font-family: 'Tiro Devanagari Hindi', serif; font-size: .9rem; color: rgba(240,230,255,.65); margin-top: 6px; line-height: 1.55; font-weight: 400; }
+
+/* ── Buttons ── */
+.btn {
+  display: block; width: 100%;
+  padding: 14px;
+  border: none; border-radius: var(--radius);
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.05rem; font-weight: 700;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--saffron), var(--pink));
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(255,107,53,.38);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,107,53,.48); }
+.btn-secondary {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,.18);
+  color: var(--text);
+  margin-top: 10px;
+}
+.btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── Result Screen ── */
+.result-circle {
+  width: 150px; height: 150px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: conic-gradient(var(--gold) var(--pct, 0%), rgba(255,255,255,.05) 0%);
+  box-shadow: 0 0 36px rgba(255,215,0,.28);
+  position: relative;
+}
+.result-circle::before {
+  content: '';
+  position: absolute; inset: 11px;
+  border-radius: 50%;
+  background: var(--deep);
+}
+.res-score { position: relative; z-index: 1; font-size: 2.2rem; font-weight: 800; color: var(--gold); line-height: 1; }
+.res-lbl   { position: relative; z-index: 1; font-size: .72rem; color: rgba(240,230,255,.45); }
+
+.result-title   { font-family: 'Tiro Devanagari Hindi', serif; font-size: 1.9rem; text-align: center; margin-bottom: 6px; }
+.result-message { text-align: center; color: rgba(240,230,255,.58); margin-bottom: 20px; }
+
+.stats-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.stat-box  { flex: 1; background: var(--card); border-radius: var(--radius); padding: 14px; text-align: center; border: 1px solid rgba(255,255,255,.07); }
+.stat-box .sv { font-size: 1.7rem; font-weight: 800; }
+.stat-box .sl { font-size: .7rem; color: rgba(240,230,255,.45); margin-top: 2px; }
+.stat-correct .sv { color: var(--mint); }
+.stat-wrong   .sv { color: var(--pink); }
+.stat-pct     .sv { color: var(--gold); }
+
+/* ── Install Banner ── */
+#installBanner {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,215,0,.1);
+  border: 1px solid rgba(255,215,0,.25);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+#installBanner.show { display: flex; }
+#installBanner p   { flex: 1; font-size: .9rem; }
+#installBtn {
+  background: var(--gold);
+  color: var(--deep);
+  border: none; border-radius: 10px;
+  padding: 8px 16px;
+  font-weight: 700; font-size: .85rem;
+  cursor: pointer; white-space: nowrap;
+}
+
+/* ── Confetti ── */
+.confetti-piece {
+  position: fixed;
+  border-radius: 2px;
+  animation: confettiFall 2s ease-in forwards;
+  z-index: 999;
+  pointer-events: none;
+}
+
+/* ── Animations ── */
+@keyframes slideDown  { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn     { from { opacity:0; transform:translateY(10px);  } to { opacity:1; transform:translateY(0); } }
+@keyframes pop        { 0% { transform:scale(.94); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+@keyframes shake      { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+@keyframes confettiFall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+
+.shake { animation: shake .3s ease; }
+
+/* ── Responsive ── */
+@media (max-width: 400px) {
+  .categories { grid-template-columns: 1fr; }
+  .container  { padding: 14px 14px 36px; }
+}

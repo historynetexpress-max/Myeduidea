@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A0A2E"/>
+      <stop offset="100%" style="stop-color:#2D0A5E"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="50%" style="stop-color:#FF6B35"/>
+      <stop offset="100%" style="stop-color:#FF3CAC"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B35"/>
+      <stop offset="100%" style="stop-color:#FFD700"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="url(#bg)"/>
+
+  <!-- Decorative outer ring -->
+  <circle cx="256" cy="256" r="230" fill="none" stroke="url(#gold)" stroke-width="3" stroke-dasharray="20 8" opacity="0.5"/>
+
+  <!-- Inner glow circle -->
+  <circle cx="256" cy="256" r="200" fill="rgba(74,14,143,0.3)"/>
+
+  <!-- Question mark shape - stylized -->
+  <g filter="url(#glow)">
+    <!-- Devanagari-inspired क letter shape -->
+    <text x="256" y="200" text-anchor="middle" font-size="160" font-family="serif" fill="url(#gold)" font-weight="bold">क्</text>
+    <!-- Quiz text -->
+    <text x="256" y="310" text-anchor="middle" font-size="70" font-family="serif" fill="url(#gold)" font-weight="bold">विज़</text>
+  </g>
+
+  <!-- Decorative dots -->
+  <circle cx="130" cy="130" r="8" fill="#FF3CAC" opacity="0.8"/>
+  <circle cx="382" cy="130" r="6" fill="#FFD700" opacity="0.8"/>
+  <circle cx="110" cy="382" r="6" fill="#00F5A0" opacity="0.8"/>
+  <circle cx="402" cy="382" r="8" fill="#FF6B35" opacity="0.8"/>
+  <circle cx="256" cy="80" r="5" fill="#FFD700" opacity="0.6"/>
+  <circle cx="256" cy="432" r="5" fill="#FF3CAC" opacity="0.6"/>
+
+  <!-- Star sparkles -->
+  <g fill="#FFD700" opacity="0.7">
+    <polygon points="155,90 160,80 165,90 175,95 165,100 160,110 155,100 145,95" transform="scale(0.7) translate(60,20)"/>
+    <polygon points="380,380 385,370 390,380 400,385 390,390 385,400 380,390 370,385" transform="scale(0.6) translate(150,150)"/>
+  </g>
+</svg>
