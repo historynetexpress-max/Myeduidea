@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Offline — हिंदी क्विज़</title>
+  <link rel="icon" href="favicon.ico"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Segoe UI',sans-serif;
+      background:#1A0A2E;
+      color:#F0E6FF;
+      min-height:100vh;
+      display:flex;align-items:center;justify-content:center;
+      text-align:center;padding:20px;
+    }
+    .card{
+      background:#240D4A;
+      border:1px solid rgba(255,215,0,.2);
+      border-radius:24px;
+      padding:48px 32px;
+      max-width:360px;
+      animation:fadeIn .5s ease;
+    }
+    .icon{font-size:4rem;margin-bottom:20px;display:block;}
+    h1{font-size:1.8rem;margin-bottom:12px;color:#FFD700;}
+    p{color:rgba(240,230,255,.6);line-height:1.6;margin-bottom:24px;}
+    button{
+      background:linear-gradient(135deg,#FF6B35,#FF3CAC);
+      color:#fff;border:none;border-radius:14px;
+      padding:14px 28px;font-size:1rem;font-weight:700;
+      cursor:pointer;transition:transform .2s;
+    }
+    button:hover{transform:scale(1.04);}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="icon">📶</span>
+    <h1>आप Offline हैं</h1>
+    <p>इंटरनेट कनेक्शन नहीं है। कृपया अपना इंटरनेट चेक करें और दोबारा कोशिश करें।</p>
+    <button onclick="window.location.reload()">🔄 फिर से कोशिश करें</button>
+  </div>
+</body>
+</html>
